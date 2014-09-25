@@ -21,11 +21,21 @@ WARNCHARS = set('(){}')
 
 
 def handler(signum, frame):
+    """Gracefully catch sigint"""
     print("\nInterrupt caught: shutting down")
     sys.exit(signum)
 
 
 def print_frame(frame):
+    """ Parse and print DHCP Frames
+
+    parse sniffed DHCP frames
+    print summary of client requests
+    print full options of server replies
+    Highlight potentially malicious chars
+
+    :param frame:
+    """
     if BOOTP in frame:
         if frame[BOOTP].op is BOOTREPLY:
             print("\nREPLY  : {}".format(frame.summary()))
@@ -48,6 +58,7 @@ def print_frame(frame):
 
 
 def sniffer():
+    """Instantiate scapy sniffer with DHCP filters"""
     try:
         sniff(iface=INTERFACE, prn=print_frame, filter='udp and (port bootps or bootps)', store=0)
     except Exception as _e:
