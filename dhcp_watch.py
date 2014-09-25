@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 """
-Usage: dhcp_watch.py with privs to set monitor mode on interface
-This script monitors for DHCP frames and highlights potentially malicious content
+Usage: sudo python dhcp_watch.py
 
-This describes the script.
+This script monitors DHCP frames and highlights potentially malicious characters
+contained withing DHCP reply options fields
 """
+
 from __future__ import print_function, absolute_import, unicode_literals
 from scapy.all import *
 import signal
