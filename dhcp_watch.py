@@ -17,7 +17,7 @@ INTERFACE = b'eth0'
 BOOTREPLY = 2
 BOLD_RED = '\033[1;91m'
 END = '\033[0m'
-WARNCHARS = set('@(){}')
+WARNCHARS = set('(){}')
 
 
 def handler(signum, frame):
