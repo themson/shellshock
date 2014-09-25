@@ -1,9 +1,18 @@
+#!/usr/bin/env python
+"""
+Usage: dhcp_watch.py with privs to set monitor mode on interface
+This script monitors for DHCP frames and highlights potentially malicious content
+
+This describes the script.
+"""
 from __future__ import print_function, absolute_import, unicode_literals
 from scapy.all import *
 import signal
 import sys
 __author__ = 'themson mester'
 
+
+INTERFACE = b'eth0'
 BOOTREPLY = 2
 BOLD_RED = '\033[1;91m'
 END = '\033[0m'
@@ -39,7 +48,7 @@ def print_frame(frame):
 
 def sniffer():
     try:
-        sniff(prn=print_frame, filter='udp and (port bootps or bootps)', store=0)
+        sniff(iface=INTERFACE, prn=print_frame, filter='udp and (port bootps or bootps)', store=0)
     except Exception as _e:
         print("ERROR - sniffer(): {}".format(_e.args))
 
