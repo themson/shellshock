@@ -2,8 +2,8 @@
 """
 Usage: sudo python dhcp_mon.py
 
-This script monitors DHCP frames and highlights potentially malicious characters
-contained within DHCP reply options fields
+Monitor DHCP frames for potentially malicious characters within reply options fields. 
+Warn to stdout, log offending frames to PCAP_LOG
 """
 
 from __future__ import print_function, absolute_import, unicode_literals
