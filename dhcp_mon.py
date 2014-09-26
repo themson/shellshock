@@ -10,14 +10,16 @@ from __future__ import print_function, absolute_import, unicode_literals
 from scapy.all import *
 import signal
 import sys
+import time
 __author__ = 'themson mester'
 
 
-INTERFACE = b'eth0'
+WARNCHARS = set('(){}')  # Chars to Check
+INTERFACE = b'eth0'  # Interface to sniff
+PCAP_LOG = b'dhcp-mon-' + time.strftime('%m.%d.%y-%Hh%Mm%Ss') + '.pcap'
 DHCPSRVR_PACKETS = (2, 5)
 BOLD_RED = '\033[1;91m'
 END = '\033[0m'
-WARNCHARS = set('(){}')
 
 
 def handler(signum, frame):
@@ -26,8 +28,18 @@ def handler(signum, frame):
     sys.exit(signum)
 
 
+def log_frame(frame, logfile=PCAP_LOG):
+    """Log packets containing warning chars to pcap file
+    :param frame:
+    :return:
+    """
+    pcap_logger = PcapWriter(logfile, append=True)
+    pcap_logger.write(frame)
+    pcap_logger.close()  # flushed on close
+
+
 def print_frame(frame):
-    """ Parse and print DHCP Frames
+    """Parse and print DHCP Frames
 
     parse sniffed DHCP frames
     print summary of client requests
@@ -42,19 +54,21 @@ def print_frame(frame):
         type_name = scapy.layers.dhcp.DHCPTypes[type_value]
         print("\nFRAME: {}".format(frame.summary()))
         print("TYPE:  DHCP-{}".format(type_name))
+
         if type_value in DHCPSRVR_PACKETS:
             print("OPTIONS:")
             for option in options:
                 warn = False
                 if type(option) is tuple:
-                    for arg in option:
+                    for arg in option:  # malicious char check
                         if any(char in WARNCHARS for char in str(arg)):
                             warn = True
                 if warn is True:
-                    print(BOLD_RED + '        {}'.format(option) + END)
+                    print(BOLD_RED + '        {} *** MALICIOUS CHARACTER DETECTED *** Logging to: ./{}'
+                          .format(option, PCAP_LOG) + END)
+                    log_frame(frame)
                 else:
                     print('        {}'.format(option))
-
                 if option == 'end':  # Skip padding
                     return
 
