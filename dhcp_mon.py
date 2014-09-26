@@ -29,10 +29,7 @@ def handler(signum, frame):
 
 
 def log_frame(frame, logfile=PCAP_LOG):
-    """Log packets containing warning chars to pcap file
-    :param frame:
-    :return:
-    """
+    """Log packets containing warning chars to pcap file"""
     pcap_logger = PcapWriter(logfile, append=True)
     pcap_logger.write(frame)
     pcap_logger.close()  # flushed on close
