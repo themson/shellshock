@@ -21,16 +21,22 @@ DHCPSRVR_PACKETS = (2, 5)
 WARNING = b'*** MALICIOUS CHARACTER DETECTED ***'
 BOLD_RED = '\033[1;91m'
 END = '\033[0m'
+frame_count = 0
 
 
 def handler(signum, frame):
     """Gracefully catch sigint"""
-    print("\nInterrupt caught: shutting down")
+    print("\n\nInterrupt Caught: shutting down")
+    if frame_count > 0:
+        print("PCAP File: {}".format(PCAP_LOG))
+    print("Frames Logged: {}\n".format(frame_count))
     sys.exit(signum)
 
 
 def log_frame(frame, logfile=PCAP_LOG):
     """Log frames containing warning chars to pcap file"""
+    global frame_count
+    frame_count += 1
     pcap_logger = PcapWriter(logfile, append=True)
     pcap_logger.write(frame)
     pcap_logger.close()
@@ -118,7 +124,7 @@ def sniffer():
 def main():
     signal.signal(signal.SIGINT, handler)
     print("\nLaunching DHCP Monitor.")
-    print("Logging Malicious Frames To: {}".format(PCAP_LOG))
+    print("Logging Malicious Frames to: {}".format(PCAP_LOG))
     print("\n<Ctrl+C to exit>")
     sniffer()
 
