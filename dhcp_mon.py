@@ -47,7 +47,7 @@ def parse_dhcp_opt(options):
 
     parse for malicious chars
     highlight offending options
-    :param options: frame[DHCP].options list
+    :param options: <frame>[DHCP].options list
     :return char_found: bool
     """
     char_found = False
@@ -55,14 +55,14 @@ def parse_dhcp_opt(options):
     for option in options:
         warn = False
         if type(option) is tuple:
-            name = option[0]
-            value = format(option[1])
-            if any((char in WARNCHARS) for char in value):
+            opt_name = option[0]
+            opt_value = format(option[1])
+            if any((char in WARNCHARS) for char in opt_value):
                 char_found, warn = True, True
             if warn is True:
-                print(BOLD_RED + b'        {}: {}  {}'.format(name, value, WARNING) + END)
+                print(BOLD_RED + b'        {}: {}  {}'.format(opt_name, opt_value, WARNING) + END)
             else:
-                print(b'        {}: {}'.format(name, value))
+                print(b'        {}: {}'.format(opt_name, opt_value))
     return char_found
 
 
